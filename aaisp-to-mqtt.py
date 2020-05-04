@@ -12,7 +12,7 @@ import requests
 import argparse
 
 LOG = logging.getLogger(__name__)
-VERSION = 0.2
+VERSION = 0.2.1
 
 AAISP_INFO_URL = 'https://chaos2.aa.net.uk/broadband/info'
 
@@ -66,7 +66,10 @@ def main():
     data = response.json()
 
     if 'info' not in data:
-        LOG.fatal('info section not found in AAISP CHAOSv2 response')
+        if 'error' in data:
+            LOG.fatal('Error encounted: %s' % data['error'])
+        else:
+            LOG.fatal('info section not found in AAISP CHAOSv2 response')
         sys.exit(1)
     circuits = data['info']
     LOG.info('Got %s circuits', len(circuits))
