@@ -6,4 +6,4 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-CMD ["/usr/bin/python", "/app/aaisp-to-mqtt.py"]
+CMD ["python", "/app/aaisp-to-mqtt.py"]

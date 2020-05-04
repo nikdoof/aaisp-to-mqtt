@@ -2,3 +2,4 @@ venv/*
 *.pyc
 config
 .DS_Store
+aaisp.cfg
