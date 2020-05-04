@@ -141,11 +141,23 @@ Build the Docker image with:
 docker build -t aaisp-mqtt .
 ```
 
-Run the container with a volume mounted config file:
+### Configuration ###
+
+You have two options for passing the configuration to the container. Either you can run the container with a volume mounted config file:
 
 ```
 docker run -d -v <path_to_config>:/app/config.cfg --name AAISPmqtt aaisp-mqtt
 ```
+
+Or you can pass the configuration values as environment variables:
+
+* AAISP_USERNAME
+* AAISP_PASSWORD
+* MQTT_BROKER
+* MQTT_PORT
+* MQTT_USERNAME
+* MQTT_PASSWORD
+* MQTT_TOPIC_PREFIX
 
 ## Setup ##
 
