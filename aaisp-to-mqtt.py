@@ -12,7 +12,7 @@ import requests
 import argparse
 
 LOG = logging.getLogger(__name__)
-VERSION = '0.2.2'
+VERSION = '0.2.3'
 
 AAISP_INFO_URL = 'https://chaos2.aa.net.uk/broadband/info'
 
@@ -57,8 +57,8 @@ def main():
     # attempt to get details from aaisp
     LOG.info('Connecting to AAISP CHAOSv2 endpoint as %s/%s', aaisp_username, '*' * len(aaisp_password))
     response = requests.get(AAISP_INFO_URL, params={
-        'control_login': aaisp_username,
-        'control_password': aaisp_password
+        'control_login': aaisp_username.encode('ascii'),
+        'control_password': aaisp_password.encode('ascii')
     })
     if not response.status_code == requests.codes.ok:
         LOG.error('Error connecting to AAISP CHAOSv2 endpoint: %s' % response.body)
