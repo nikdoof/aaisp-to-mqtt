@@ -162,6 +162,7 @@ def main():
 
     # disconnect
     LOG.info('Disconnecting from MQTT')
+    client.loop()
     client.disconnect()
 
 
