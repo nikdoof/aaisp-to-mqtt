@@ -52,7 +52,7 @@ def main():
 
     if aaisp_username is None or aaisp_password is None:
         LOG.fatal('Username or Password missing for AAISP')
-        sys.exit(1)
+        return 1
 
     # attempt to get details from aaisp
     LOG.info('Connecting to AAISP CHAOSv2 endpoint as %s/%s', aaisp_username, '*' * len(aaisp_password))
@@ -62,45 +62,45 @@ def main():
     })
     if not response.status_code == requests.codes.ok:
         LOG.error('Error connecting to AAISP CHAOSv2 endpoint: %s' % response.body)
-        sys.exit(1)
+        return 1
+
     data = response.json()
 
+    # Check for response errors
     if 'info' not in data:
         if 'error' in data:
             LOG.fatal('Error encounted: %s' % data['error'])
         else:
             LOG.fatal('info section not found in AAISP CHAOSv2 response')
-        sys.exit(1)
+        return 1
+
     circuits = data['info']
     LOG.info('Got %s circuits', len(circuits))
     if len(circuits) == 0:
         LOG.fatal('No circuits returned from AAISP CHAOSv2')
 
     # work out unique line IDs and logins
-    logins = []
-    lines = []
-    for circuit in circuits:
-        if circuit['login'] not in logins:
-            logins.append(circuit['login'])
-        if circuit['ID'] not in lines:
-            lines.append(circuit['ID'])
+    logins = set(c['login'] for c in circuits)
+    lines = set(c['ID'] for c in circuits)
     LOG.info('* Lines: %s', ', '.join(lines))
     LOG.info('* Logins: %s', ', '.join(logins))
 
     # connect to the broker
     LOG.info('Connecting to MQTT broker %s:%s', mqtt_broker, mqtt_port)
     client = mqtt.Client()
+    client.max_inflight_messages_set(100)
 
     # do auth?
     if mqtt_username is not None and mqtt_password is not None:
         client.username_pw_set(mqtt_username, mqtt_password)
-    client.max_inflight_messages_set(100)
+
     try:
         client.connect(mqtt_broker, mqtt_port, 60)
     except Exception:
         LOG.exception('Error connecting to MQTT')
-        sys.exit(1)
-    LOG.info('Connected OK to MQTT')
+        return 1
+    else:
+        LOG.info('Connected to MQTT Server %s', mqtt_broker)
 
     # version and indexes
     publish(client=client, topic='%s/$version' %
@@ -116,11 +116,10 @@ def main():
         publish_per_circuit(client=client, circuit=circuit,
                             mqtt_topic_prefix=mqtt_topic_prefix)
     LOG.info('Published details for %s circuits', len(circuits))
+
     # disconnect
     LOG.info('Disconnecting from MQTT')
     client.disconnect()
-
-    sys.exit(0)
 
 
 def publish_per_circuit(client, circuit, mqtt_topic_prefix):
@@ -157,11 +156,10 @@ def publish_per_circuit(client, circuit, mqtt_topic_prefix):
 
 
 def publish(client, topic, payload):
-    time.sleep(0.1)
     result = client.publish(topic=topic, payload=payload, qos=1)
     if result[0] != 0:
         LOG.fail('MQTT publish failure: %s %s', topic, payload)
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
