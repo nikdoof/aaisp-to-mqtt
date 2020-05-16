@@ -1,0 +1,12 @@
+[aaisp]
+username = xx000@x
+password = PasswordPassword
+
+[mqtt]
+broker = localhost
+port = 1883
+topic_prefix = aaisp
+
+[homeassistant]
+enabled = false
+discovery_prefix = homeassistant

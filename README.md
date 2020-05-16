@@ -1,12 +1,13 @@
 # AAISP to MQTT Service #
 
-A script to publish [Andrews & Arnold / AAISP](http://aa.net.uk) broadband quota and sync rates to [MQTT](http://mqtt.org/).
+A script to publish [Andrews & Arnold / AAISP](http://aa.net.uk) broadband quota and sync rates to [MQTT](http://mqtt.org/). It uses version 2 of AAISPs [CHAOS](https://support.aa.net.uk/CHAOS) API. Useful for integrating and displaying AAISP line properties in home automation applications, such as [Home Assistant](https://home-assistant.io/) or [openHAB](http://www.openhab.org/).
 
-It uses version 2 of AAISPs [CHAOS](https://support.aa.net.uk/CHAOS) API.
+This is a fork of the original [aaisp2mqtt project](https://github.com/natm/aaisp-to-mqtt) by [natm](http://github.com/natm) with the aim to increase integration with Home Assistant and fixing a few minor issues.
 
-Useful for integrating and displaying AAISP line properties in home automation applications, such as [Home Assistant](https://home-assistant.io/) or [openHAB](http://www.openhab.org/).
+## Features ##
 
-![Workflow](https://raw.github.com/natm/aaisp-to-mqtt/master/docs/workflow.png)
+* Home Assistant auto discovery
+
 
 ## Use cases ##
 
@@ -15,19 +16,13 @@ Useful for integrating and displaying AAISP line properties in home automation a
 * Flashing a light in the office when the downstream sync rate drops
 * Sending line info to [Crouton](https://github.com/edfungus/Crouton)
 
-Example showing lines in Home Assistant...
-
-![Screenshot](https://raw.github.com/natm/aaisp-to-mqtt/master/docs/home-assistant-panel.png)
-
-![Screenshot](https://raw.github.com/natm/aaisp-to-mqtt/master/docs/home-assistant-quota-graph.png)
-
 ## Configuration ##
 
 Create a config file, for example in /etc/aaisp-mqtt.conf, minimal viable with no MQTT authentication:
 
 ```
 [aaisp]
-username = aa@1
+username = aa000@x.a
 password = LongAccountPassword
 
 [mqtt]
@@ -40,7 +35,7 @@ You can also optionally specify MQTT username and password:
 
 ```
 [aaisp]
-username = aa@1
+username = aa000@x.a
 password = LongAccountPassword
 
 [mqtt]
@@ -60,21 +55,21 @@ $ pip install -r requirements.txt
 Run the service:
 
 ```
-$ aaisp-to-mqtt.py /etc/aaisp-mqtt.conf
+$ aaisp2mqtt.py /etc/aaisp-mqtt.conf
 ```
 
 It will display debug output similar to:
 
 ```
-INFO [2016-11-16 01:24:07,069] Connecting to AAISP CHAOSv2 endpoint
-INFO [2016-11-16 01:24:07,338] Got 3 circuits
-INFO [2016-11-16 01:24:07,338] * Lines: 32891, 37835, 37964
-INFO [2016-11-16 01:24:07,338] * Logins: gb12@a.1, el6@a.1, el6@a.2
-INFO [2016-11-16 01:24:07,339] Connecting to MQTT broker mqtt.gorras.hw.esgob.com:1883
-INFO [2016-11-16 01:24:07,345] Connected OK to MQTT
-INFO [2016-11-16 01:24:07,346] Published version and index messages
-INFO [2016-11-16 01:24:07,350] Published details for 3 circuits
-INFO [2016-11-16 01:24:07,350] Disconnecting from MQTT
+INFO [2020-05-16 14:49:05,142] Connecting to AAISP CHAOSv2 endpoint as xx000@x.a
+INFO [2020-05-16 14:49:06,002] Got 1 circuits
+INFO [2020-05-16 14:49:06,003] * Lines: 41429
+INFO [2020-05-16 14:49:06,004] * Logins: xx000@x.0
+INFO [2020-05-16 14:49:06,005] Connecting to MQTT broker 127.0.0.1:1883
+INFO [2020-05-16 14:49:06,016] Connected to MQTT Server 127.0.0.1
+INFO [2020-05-16 14:49:06,023] Published version and index messages
+INFO [2020-05-16 14:49:06,031] Published details for 1 circuits
+INFO [2020-05-16 14:49:06,033] Disconnecting from MQTT
 ```
 
 Schedule the script via a crontab to run every hour or 30 minutes.
@@ -158,6 +153,8 @@ Or you can pass the configuration values as environment variables:
 * MQTT_USERNAME
 * MQTT_PASSWORD
 * MQTT_TOPIC_PREFIX
+* HOMEASSISTANT_ENABLED
+* HOMEASSISTANT_DISCOVERY_PREFIX
 
 ## Setup ##
 
@@ -174,4 +171,4 @@ MIT
 * Make your changes
 * Open a pull request back from your branch to master in this repo
 
-Found a bug? open an [issue](https://github.com/natm/aaisp-to-mqtt/issues).
+Found a bug? open an [issue](https://github.com/nikdoof/aaisp2mqtt/issues).
