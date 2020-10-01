@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='aaisp2mqtt',
-    version='0.3.0',
+    version='0.3.1',
     description='A script to publish Andrews & Arnold / AAISP broadband quota and sync rates to MQTT',
     long_description=long_description,
     long_description_content_type='text/markdown',

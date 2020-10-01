@@ -14,7 +14,7 @@ import requests
 
 
 LOG = logging.getLogger(__name__)
-VERSION = '0.3.0'
+VERSION = '0.3.1'
 
 AAISP_INFO_URL = 'https://chaos2.aa.net.uk/broadband/info'
 
